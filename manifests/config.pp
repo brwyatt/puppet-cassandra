@@ -34,6 +34,10 @@ class cassandra::config(
     $auto_snapshot,
     $multithreaded_compaction,
     $endpoint_snitch,
+    $dc,
+    $rack,
+    $dc_suffix,
+    $prefer_local,
     $internode_compression,
     $disk_failure_policy,
     $thread_stack_size,
@@ -80,6 +84,12 @@ class cassandra::config(
     file { "${config_path}/cassandra.yaml":
         ensure  => file,
         content => template("${module_name}/cassandra${version}.yaml.erb"),
+    }
+    if($endpoint_snitch == 'GossipingPropertyFileSnitch') {
+        file { "${config_path}/cassandra-rackdc.properties":
+            ensure  => file,
+            content => template("${module_name}/cassandra-rackdc.properties.erb"),
+        }
     }
 
 }
